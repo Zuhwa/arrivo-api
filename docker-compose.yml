@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:11-alpine3.15
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: arrivo
+    volumes:
+      - ./docker-volume/pgdata:/var/lib/postgresql/data

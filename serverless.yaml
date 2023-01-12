@@ -1,0 +1,41 @@
+service: arrivo-serverless-api
+
+plugins:
+  - serverless-offline
+  - serverless-esbuild
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  vpc:
+    securityGroupIds:
+      - sg-01aaca6116466614b
+    subnetIds:
+      - subnet-079103205e34f63ed
+      - subnet-0e4f5ce26efd9b95f
+
+custom:
+  esbuild:
+    external:
+      - 'class-transformer/storage'
+      - 'cache-manager'
+      - '@nestjs/microservices'
+      - '@nestjs/websockets/socket-module'
+      - 'pg-native'
+
+functions:
+  main:
+    handler: dist/lambda.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
+    environment:
+      DB_HOST: arrivo-db.cdkkczrda5il.ap-southeast-1.rds.amazonaws.com
+      DB_NAME: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: test1234
