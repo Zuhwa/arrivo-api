@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { Role } from './user-session.entity';
 
 @Entity('users')
 export class User {
@@ -24,6 +25,9 @@ export class User {
   @ApiProperty()
   @Column({ name: 'full_name' })
   fullName: string;
+
+  @ApiProperty()
+  roles: Role[];
 
   @ApiProperty()
   @Column()

@@ -14,9 +14,14 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from 'src/user/jwt.guard';
 import { Roles } from 'src/user/roles.decorator';
-import { Role } from 'src/user/entities/user-session.entity';
+import { Role, UserSession } from 'src/user/entities/user-session.entity';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Post as PostType } from './entities/post.entity';
+import {
+  Post as PostType,
+  PostLabel,
+  PostStatus,
+} from './entities/post.entity';
+import { User } from 'src/user/user.decorator';
 
 @ApiTags('post')
 @ApiBearerAuth()
@@ -34,14 +39,31 @@ export class PostController {
 
   @Get()
   @ApiResponse({ type: [PostType] })
-  findAll() {
-    return this.postService.findAll();
+  findAll(@User() { roles, membership }: UserSession) {
+    const status = roles.includes(Role.Admin)
+      ? [PostStatus.DRAFT, PostStatus.PENDING_REVIEW, PostStatus.PUBLISHED]
+      : [PostStatus.PUBLISHED];
+
+    const label = roles.includes(Role.Admin)
+      ? [PostLabel.NORMAL, PostLabel.PREMIUM]
+      : [PostLabel.NORMAL, membership];
+
+    return this.postService.findAll(status, label);
   }
 
   @Get(':id')
   @ApiResponse({ type: PostType })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.postService.findOne(id);
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @User() { roles, membership }: UserSession,
+  ) {
+    const status = roles.includes(Role.Admin)
+      ? [PostStatus.DRAFT, PostStatus.PENDING_REVIEW, PostStatus.PUBLISHED]
+      : [PostStatus.PUBLISHED];
+
+    const label = !roles.includes(Role.Admin) ? membership : undefined;
+
+    return this.postService.findOne(id, status, label);
   }
 
   @Patch(':id')

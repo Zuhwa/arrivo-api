@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Post } from './entities/post.entity';
+import { Post, PostLabel, PostStatus } from './entities/post.entity';
 
 @Injectable()
 export class PostService {
@@ -29,15 +29,30 @@ export class PostService {
     return await this.findOne(post.id);
   }
 
-  async findAll() {
+  async findAll(
+    status: PostStatus[] = [PostStatus.PUBLISHED],
+    label: PostLabel[] = [PostLabel.NORMAL, PostLabel.PREMIUM],
+  ) {
     return await this.postRepo.find({
+      where: {
+        status: In(status),
+        label: In(label),
+      },
       relations: ['category'],
     });
   }
 
-  async findOne(id: string) {
+  async findOne(
+    id: string,
+    status: PostStatus[] = [
+      PostStatus.PUBLISHED,
+      PostStatus.PENDING_REVIEW,
+      PostStatus.DRAFT,
+    ],
+    label?: PostLabel,
+  ) {
     const post = await this.postRepo.findOne({
-      where: { id },
+      where: { id, status: In(status), label },
       relations: ['category'],
     });
 
@@ -50,7 +65,6 @@ export class PostService {
     await this.categoryService.findOne(updatePostDto.categoryId);
 
     await this.postRepo.update(id, {
-      ...post,
       ...updatePostDto,
     });
 

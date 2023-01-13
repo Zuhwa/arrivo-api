@@ -8,6 +8,9 @@ import { PostModule } from './post/post.module';
 import { UserModule } from './user/user.module';
 import { PaymentModule } from './payment/payment.module';
 import pgConfig from './postgres.config';
+import { config } from 'dotenv';
+
+config();
 
 @Module({
   imports: [

@@ -12,7 +12,7 @@ import { JwtStrategy } from './jwt.strategy';
     PassportModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: 'hello-world',
+      secret: 'c12d3558-5d33-44c7-9d9e-0e6771e82fb9',
     }),
   ],
   controllers: [UserController],

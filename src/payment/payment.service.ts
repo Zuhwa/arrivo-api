@@ -9,6 +9,9 @@ import { UserService } from 'src/user/user.service';
 import { PostLabel } from 'src/post/entities/post.entity';
 import { BillplzRedirectQueryDto } from './dto/billplz-redirect-query.dto';
 import { BillplzCallbackBodyDto } from './dto/bilplz-callback-query.dto';
+import { ConfigService } from '@nestjs/config';
+
+const configService = new ConfigService();
 
 @Injectable()
 export class PaymentService {
@@ -36,8 +39,8 @@ export class PaymentService {
         name: user.fullName,
         amount: 5000,
         reference_1: user.id,
-        redirect_url: 'http://localhost:3000/payment/redirect',
-        callback_url: 'http://localhost:3000/payment/callback',
+        redirect_url: `${configService.get('HOST_URL')}/payment/redirect`,
+        callback_url: `${configService.get('HOST_URL')}/payment/callback`,
       },
       {
         headers: {

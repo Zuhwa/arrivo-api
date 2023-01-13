@@ -1,10 +1,10 @@
-import { config } from 'dotenv';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Category } from './category/entities/category.entity';
 import { Payment } from './payment/entities/payment.entity';
 import { User } from './user/entities/user.entity';
 import { Post } from './post/entities/post.entity';
+import { config } from 'dotenv';
 
 config();
 

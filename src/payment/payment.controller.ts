@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { JwtAuthGuard } from 'src/user/jwt.guard';
 import { UserSession } from 'src/user/entities/user-session.entity';
@@ -7,6 +15,10 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePaymentDto } from './dto/create-payment-response.dto';
 import { BillplzRedirectQueryDto } from './dto/billplz-redirect-query.dto';
 import { BillplzCallbackBodyDto } from './dto/bilplz-callback-query.dto';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
+
+const configService = new ConfigService();
 
 @ApiTags('payment')
 @Controller('payment')
@@ -24,8 +36,12 @@ export class PaymentController {
   }
 
   @Get('redirect')
-  redirect(@Query() query: BillplzRedirectQueryDto) {
-    return this.paymentService.redirect(query);
+  async redirect(
+    @Query() query: BillplzRedirectQueryDto,
+    @Res() res: Response,
+  ) {
+    await this.paymentService.redirect(query);
+    return res.redirect(`${configService.get('FE_URL')}/#/home`);
   }
 
   @Post('callback')

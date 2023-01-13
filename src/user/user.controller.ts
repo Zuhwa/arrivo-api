@@ -27,7 +27,9 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ type: UserType })
-  findOne(@User() { id }: UserSession) {
-    return this.userService.findOne(id);
+  async findOne(@User() userSession: UserSession) {
+    const user = await this.userService.findOne(userSession.id);
+    user.roles = userSession.roles;
+    return user;
   }
 }
