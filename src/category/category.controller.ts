@@ -19,13 +19,13 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 
 @ApiTags('category')
-// @ApiBearerAuth()
-// @Roles(Role.Admin)
-// @UseGuards(JwtAuthGuard)
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiResponse({ type: Category })
   create(@Body() createCategoryDto: CreateCategoryDto) {
@@ -44,6 +44,9 @@ export class CategoryController {
     return this.categoryService.findOne(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiResponse({ type: Category })
   update(
@@ -53,6 +56,9 @@ export class CategoryController {
     return this.categoryService.update(id, updateCategoryDto);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiResponse({ type: Category })
   remove(@Param('id', ParseUUIDPipe) id: string) {
